@@ -1,0 +1,33 @@
+#Sierpiński carpet
+'''You are required to write a program to print out the Sierpiński carpet of size 3^k × 3^k.
+Construction of Sierpiński carpet (quoted from wikipeadia):
+The construction of the Sierpiński carpet begins with a square. 
+The square is cut into 9 congruent subsquares in a 3-by-3 grid, and the central subsquare is removed. 
+The same procedure is then applied recursively to the remaining 8 subsquares, ad infinitum. '''
+
+
+def pattern(len_of_edge):
+    if len_of_edge == 3:
+        return ['###', '# #', '###']                  # define the most basic situation
+    else:
+        # recursive to the "basic pattern" of the pattern(1/9 of the pattern)
+        list_of_pattern = pattern(len_of_edge/3)
+        # expand the pattern in height by increasing the lines(3 elements in a line)
+        for j in range(int(len_of_edge/3)):
+            list_of_pattern.append(list_of_pattern[j])
+        for j in range(int(len_of_edge/3)):
+            list_of_pattern.append(list_of_pattern[j])
+        # create the line that contains the blank area
+        for k in range(len(list_of_pattern)):
+            if len_of_edge/3 <= k < 2*len_of_edge/3:  # the blank space is in the range of 1/3 to 2/3 of the side
+                list_of_pattern[k] = list_of_pattern[k] + ' '*int(len_of_edge/3) + list_of_pattern[k]
+                # the original element[k] will be updated with the new elements, which contains blanks and #'s
+            else:
+                list_of_pattern[k] = list_of_pattern[k]*3  # enlarge the pattern to 3 times of original
+        return list_of_pattern
+
+num = int(input())
+len_of_side = 3**num
+ans = pattern(len_of_side)
+for i in ans:
+    print(i)
