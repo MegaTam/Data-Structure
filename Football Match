@@ -1,0 +1,48 @@
+#Football Match
+'''There are n teams in this tournament, numbered from 1 to n. 
+Each team has its popularity, and the popularity of team i is a(i). 
+A match between i and j will gain a(i) × a(j) MOD M attractions.
+When a football team loses a match, it will be eliminated from the tournament. 
+At the end, the team left standing will be the champion of this tournament. 
+Calculate the maximum sum of the attractions of the (n-1) matches.'''
+
+
+list_of_input = input().split()
+n, M = int(list_of_input[0]), int(list_of_input[1])
+list_of_a = input().split()
+for num in range(n):
+    list_of_a[num] = int(list_of_a[num])
+
+def prim(graph_input):
+    closest = [0]*n
+    highest_cost = [-1]
+    max_sum = 0
+    for p in range(1, n):
+        highest_cost.append(graph_input[0][p])
+
+    for i in range(1, n):
+        index = 0
+        maxi = 0
+        for k in range(1, n):
+            if highest_cost[k] != -1 and highest_cost[k] > maxi:
+                index = k
+                maxi = highest_cost[k]
+        max_sum += maxi
+        highest_cost[index] = -1
+        for m in range(1, n):
+            if highest_cost[m] != -1 and highest_cost[m] < graph_input[index][m]:
+                highest_cost[m] = graph_input[index][m]
+                closest[m] = index
+    return max_sum
+
+def create_graph(num_of_a):
+    list_of_matrix = []
+    for i in range(n):
+        list_of_matrix.append([0]*n)
+        for number in range(n):
+            list_of_matrix[i][number] = (list_of_a[i] * list_of_a[number]) % M
+        list_of_matrix[i][i] = 0
+    return list_of_matrix
+
+graph = create_graph(n)
+print(prim(graph))
