@@ -1,0 +1,78 @@
+#Median Search Tree
+'''Barbara has got a set of values with size of 2k initially. Barbara wants to do m operations on it. 
+Each operation belongs to the following 3 types:
+• 1 w: insert a value w.
+• 2: output all the median 2k values, i.e. at−k+p, ∀1 ≤ p ≤ 2k.
+• 3 p: delete the p-th value among median 2k values, i.e. at−k+p.
+We guarantee that all the values will be distinct and the size of the set is always at least 2k.
+Output the median 2k values of the sorted array'''
+
+
+import heapq
+information = input().split()
+k = int(information[1])
+list_of_mid = input().split()
+for num in range(2*k):
+    list_of_mid[num] = int(list_of_mid[num])    # initialize the list of min
+list_of_mid.sort()
+max_heap = []   # create a max_heap to store number smaller than list_of_mid
+min_heap = []   # create a min_heap to store number larger than list_of_mid
+
+''' value: max_heap[0] < list_of_mid[0] < list_of_mid[-1] < min_heap[0]
+    size: (max_heap - min_heap) = 1 or 0, list_of_mid = 2k'''
+
+def update():       # should maintain len(max_heap) >= len(min_heap), and their difference <= 1
+    if len(max_heap) - len(min_heap) > 1:
+        '''if len(max)-len(min) > 1, then pop root of max_heap and insert it into list_of_mid[0]
+            then pop list_of_mid[-1] and insert it into min_heap'''
+        list_of_mid.insert(0, -1*heapq.heappop(max_heap))
+        heapq.heappush(min_heap, list_of_mid.pop())
+    if len(min_heap) - len(max_heap) > 0:
+        ''' if len(min)-len(max) >= 1, then pop root of min_heap and insert it into list_of_mid[-1]
+            then pop list_of_mid[0] and insert it into max_heap'''
+        list_of_mid.append(heapq.heappop(min_heap))
+        heapq.heappush(max_heap, -1*list_of_mid.pop(0))
+
+def insert(num_to_insert):  # def a function to insert the num
+    if num_to_insert <= list_of_mid[0]:
+        '''if the num is too small to be stored in list_of_mid
+            then insert the num into max_heap'''
+        heapq.heappush(max_heap, -1 * num_to_insert)
+        update()
+    elif num_to_insert >= list_of_mid[-1]:
+        '''if the num is too large to be stored in list_of_mid
+            then insert the num into min_heap'''
+        heapq.heappush(min_heap, num_to_insert)
+        update()
+    else:
+        '''if the num can be stored in list_of_mid, insert it into the list and sort the list'''
+        '''if len(max)-len(min)=1, pop list_of_sort[-1] to min'''
+        '''if len(max)-len(min)=0, pop list_of_sort[0] to max'''
+        if len(max_heap) - len(min_heap) == 1:
+            heapq.heappush(min_heap, list_of_mid.pop())
+        else:
+            heapq.heappush(max_heap, -1*list_of_mid.pop(0))
+        insort_index = 0
+        for index in range(2*k-1):
+            if list_of_mid[index] < num_to_insert:
+                insort_index += 1
+        list_of_mid.insert(insort_index, num_to_insert)
+        update()
+
+def delete(index_to_delete):
+    del list_of_mid[index_to_delete-1]
+    if len(max_heap) == len(min_heap):
+        list_of_mid.append(heapq.heappop(min_heap))
+    else:
+        list_of_mid.insert(0, -1*heapq.heappop(max_heap))
+
+for i in range(int(information[0])):
+    operation = input().split()
+    if operation[0] == '1':
+        insert(int(operation[1]))
+    elif operation[0] == '3':
+        delete(int(operation[1]))
+    elif operation[0] == '2':
+        for num in range(len(list_of_mid)-1):
+            print(list_of_mid[num], end=' ')
+        print(list_of_mid[-1])
