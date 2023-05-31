@@ -1,0 +1,64 @@
+# 02 Representaion
+'''Each positive integer n corresponds to a unique binary representation (specifying that binary
+numbers are written from right to left, in order of most significant digit to least significant digit).
+For example: 10 = 8 + 2 = 2(3) + 2(1)
+For ease of writing, “a(b)” is used in this question to denote “a to the power of b”, i.e., a^b.
+Specifying the 02 representation of a number can be obtained by the following procedure:
+1. substitute a number that is not 0 or 2 with its binary representation, additionally, using 2(0) instead of 1.
+2. check whether the result contains only 0 and 2, and if it contains numbers other than 0 and 2, repeat the step 1 for these numbers
+It can be proved that the representation is unique after the above steps. '''
+
+def get_lower_bound(num):  # get 2**n which is closest to num
+    time = 0
+    while num >= 2 ** time:
+        time += 1
+    return time - 1    # return an integer which is the power of lower bound
+
+def divide(num):       # input an int, divide the int into sums of 2**n
+    list_of_powers = []
+    remaining = num
+    while remaining >= 1:
+        list_of_powers.append(get_lower_bound(remaining))
+        remaining = remaining - 2 ** get_lower_bound(remaining)
+    return list_of_powers   # return a list contains the powers
+
+def check_0_or_1_or_2(num):        # check whether the num is 0 or 1 or 2
+    list_of_element = [0, 1, 2]
+    if num not in list_of_element:
+        return False
+    return True
+
+def change(list_to_change):          # input a list and change it into list contains 0 and 2 only
+    for i in range(len(list_to_change)):
+        if not check_0_or_1_or_2(list_to_change[i]):      # if 'i' contains more than 0 & 2
+            list_to_change[i] = divide(list_to_change[i])   # divide the extra num into 0 and 2
+            if not check_0_or_1_or_2(list_to_change[i]):
+                change(list_to_change[i])
+    return list_to_change
+
+def package(list_to_package):  # package num in list into num in brackets
+    list_of_output = []
+    string_form_basic = str(list_to_package)
+    string_form = string_form_basic[1:len(string_form_basic)-1]
+    for i in string_form:
+        if i == '[':
+            list_of_output.append('2(')
+        elif i == '2':
+            list_of_output.append('2(2)')
+        elif i == '0':
+            list_of_output.append('2(0)')
+        elif i == ',':
+            list_of_output.append('+')
+        elif i == ']':
+            list_of_output.append(')')
+        elif i == '1':
+            list_of_output.append('2')
+    string = str()
+    for i in list_of_output:
+        string = string + i
+    return string
+
+num_to_replace = int(input())
+list_of_power_divide = divide(num_to_replace)
+num_to_print = package(change(list_of_power_divide))
+print(num_to_print)
