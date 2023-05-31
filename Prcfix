@@ -1,0 +1,43 @@
+# Prcfix
+'''You are given n strings s(1), s(2), · · · , s(n) and q queries. 
+In the ith query, you are given a string t(i), 
+please find out how many strings in s(1), s(2), · · · , s(n) begins with t(i)'''
+
+
+class Node(object):
+    def __init__(self):
+        self.current_count = 0
+        self.next = [None]*26
+
+class tree_of_alphabet(object):
+    def __init__(self):
+        self.root = Node()
+
+    def add_new_word(self, str_input):
+        root_of_tree = self.root
+        for i in str_input:
+            index = ord(i) - ord('a')
+            if root_of_tree.next[index] is None:
+                root_of_tree.next[index] = Node()
+            root_of_tree = root_of_tree.next[index]
+            root_of_tree.current_count += 1
+
+    def get_num_of_str(self, str_to_find):
+        cur = self.root
+        for element in str_to_find:
+            index = ord(element) - ord('a')
+            if cur.next[index] is None:
+                return 0
+            cur = cur.next[index]
+        return cur.current_count
+
+n = int(input())
+tree = tree_of_alphabet()
+for num_of_string in range(n):
+    word = input()
+    tree.add_new_word(word)
+
+q = int(input())
+for num_of_label in range(q):
+    label = input()
+    print(tree.get_num_of_str(label))
