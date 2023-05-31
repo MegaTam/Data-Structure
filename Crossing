@@ -1,0 +1,40 @@
+#Crossing
+'''A terminal is a row of n equal segments numbered 1 to n in order. There are two parallel terminals, one above the other.
+You are given an array a of length n. For all i = 1, 2, , n, there should be a straight wire from some
+point on segment i of the top terminal to some point on segment ai of the bottom terminal. 
+You can’t select the endpoints of a segment. What is the maximum number of crossings there can be if you place the wires optimally?'''
+
+
+len_of_line = int(input())
+ai = input().split()         # the data type input is a string, we should change it to list first
+list_of_line_int = []
+for element in ai:
+    list_of_line_int.append(int(element))
+
+def merge_count(array_to_sort, left, right):      # use the method of merge sort to solve the problem
+    if left >= right:
+        return 0
+    mid = (left + right) // 2
+    intersection = merge_count(array_to_sort, left, mid) + merge_count(array_to_sort, mid + 1, right)
+    i = left
+    j = mid + 1
+    temporary = []
+    while i <= mid and j <= right:
+        if array_to_sort[i] < array_to_sort[j]:
+            temporary.append(array_to_sort[i])
+            i += 1  # move to the next element
+        else:       # if any of the previous ones are not smaller than the latter one
+            intersection += (mid - i + 1)
+            # intersection will increase(each of the segments between them will create an intersection)
+            temporary.append(array_to_sort[j])
+            j += 1
+    while i <= mid:
+        temporary.append(array_to_sort[i])
+        i += 1
+    while j <= right:
+        temporary.append(array_to_sort[j])
+        j += 1
+    array_to_sort[left: right + 1] = temporary
+    return intersection  # the intersection will be the final result of question
+
+print(merge_count(list_of_line_int, 0, len_of_line - 1))
