@@ -6,4 +6,4 @@ The questions include:
   3. Sierpiński carpet
   4. Median Search Tree
   5. Football Match
-  6. Prcfix
+  6. Prefix
